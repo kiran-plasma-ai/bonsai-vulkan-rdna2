@@ -14,9 +14,11 @@ ExecStart=%h/.local/share/llama.cpp-prism/bin/llama-server \
     -m %h/models/bonsai/Ternary-Bonsai-2.5-27B-Q2_0-mtp.gguf \
     -ngl 99 \
     -fa on \
-    -c 65536 \
+    -c 131072 \
     --jinja \
     --metrics \
+    --cache-type-k q8_0 \
+    --cache-type-v q8_0 \
     --alias bonsai-2.5-27b \
     --parallel 1 \
     --spec-type draft-mtp \

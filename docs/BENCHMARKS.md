@@ -103,6 +103,11 @@ the pack and draft setting, since a 30% decode difference changes how many tasks
 - Terminal-Bench 2.0, five tasks: broad terminal agency, useful when the question is "can it run commands
   and recover", not "can it fix an issue".
 
+Grading is `bench/swebench-regrade.sh <tasks-dir> <task-id> <patch> <job-name>`: it stages the patch as a
+synthetic source job and runs the benchmark's `PatchReplayAgent`, which applies it to a pristine image and
+runs the unchanged verifier. That is the number the protocol calls authoritative. Verified here: a
+29,777-byte incomplete patch re-graded to 0.0 in 38 seconds.
+
 ## Running it
 
 Three things that are not obvious from the upstream docs and cost time to discover:
