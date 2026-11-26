@@ -120,3 +120,22 @@ Three things that are not obvious from the upstream docs and cost time to discov
 For speed, start the server with `--metrics` and bracket the run with `bench/swebench-speed.sh`. Agent
 loops reuse the conversation prefix, so in a mid-run window 33,735 of 33,739 prompt tokens came from the
 KV cache: a fresh-prefill number would misrepresent the run.
+
+## Budget: report the deadline, do not stop at it
+
+The protocol scores the patch present at the 50-minute deadline. On a consumer card at roughly 60 tok/s
+that clock measures our hardware more than the model, so the useful run keeps going.
+
+Run with `--agent-timeout-multiplier 4` and take a snapshot at the 50-minute mark with
+`bench/swebench-snapshot.sh <container> deadline.patch`. Grade both patches: the deadline one tells you
+what the benchmark's own rule would have scored, and the final one tells you whether the model eventually
+finishes the task. Report them as two lines, never merged:
+
+| | meaning |
+|---|---|
+| resolved at deadline | comparable to published V2 numbers |
+| resolved when allowed to finish | capability on this hardware, not comparable |
+| wall time and tokens to finish | the real cost of the task on this card |
+
+Measured on the first HARD-51 task here, `medium` effort: 18 turns, about 5,800 generated tokens per
+turn, 59.7 tok/s decode, and still reading when the 50 minutes ran out, with no patch written.
