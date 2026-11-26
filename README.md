@@ -47,11 +47,14 @@ workload that re-reads long prompts is better served by `Q2_0` with MTP (489 pre
 
 ## Serve it
 
-`systemd/llama-server-bonsai.service` runs `Q2_0-mtp` at 64K context on port 8884 through the fork, with
-MTP drafting at `n-max 2`. Measured through the HTTP server on this card: 490 tok/s prefill on a 5.7k
-prompt, 74 tok/s decode, 13.5 GiB of VRAM, native tool calls working. A 30.5k-token prompt prefills in
-66 s and decodes at 64 tok/s. Configuration, client notes and the settings that do not work are in
-[docs/SERVING.md](docs/SERVING.md).
+`systemd/llama-server-bonsai.service` runs `Q2_0-mtp` at 128K context on port 8884 through the fork, with
+MTP drafting at `n-max 2` and `q8_0` KV. Measured through the HTTP server on this card: 490 tok/s prefill
+on a 5.7k prompt, 74 tok/s decode, 13.7 GiB of VRAM at 128K, native tool calls working.
+
+A 30.5k-token prompt prefills in 66 s and decodes at 64 tok/s; at 65k depth decode settles at 52 tok/s.
+Configuration, client notes and the settings that do not work are in [docs/SERVING.md](docs/SERVING.md).
+One finished agentic run with this configuration, 310 of 311 tests on a SWE-bench Pro task, is in
+[docs/AGENTIC.md](docs/AGENTIC.md).
 
 For model comparison, [docs/BENCHMARKS.md](docs/BENCHMARKS.md) surveys the agentic suites that can be
 pointed at an OpenAI-compatible endpoint (t-bench text, Terminal-Bench, SWE-bench with mini-swe-agent,

@@ -149,3 +149,5 @@ finishes the task. Report them as two lines, never merged:
 
 Measured on the first HARD-51 task here, `medium` effort: 18 turns, about 5,800 generated tokens per
 turn, 59.7 tok/s decode, and still reading when the 50 minutes ran out, with no patch written.
+
+The finished run, with 128K context and a re-grade, is written up in [AGENTIC.md](AGENTIC.md).

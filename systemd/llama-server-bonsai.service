@@ -1,5 +1,5 @@
 [Unit]
-Description=llama.cpp server (Ternary Bonsai 2.5 27B, Prism fork, Vulkan, 64K, MTP)
+Description=llama.cpp server (Ternary Bonsai 2.5 27B, Prism fork, Vulkan, 128K, MTP)
 After=network.target
 # One card: only one of the served models can hold its weights at a time.
 Conflicts=llama-server-inkling.service rustingstrata-inkling.service
