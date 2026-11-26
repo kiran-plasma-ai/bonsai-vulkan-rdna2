@@ -16,6 +16,7 @@ ExecStart=%h/.local/share/llama.cpp-prism/bin/llama-server \
     -fa on \
     -c 65536 \
     --jinja \
+    --metrics \
     --alias bonsai-2.5-27b \
     --parallel 1 \
     --spec-type draft-mtp \

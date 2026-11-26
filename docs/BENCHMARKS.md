@@ -102,3 +102,28 @@ the pack and draft setting, since a 30% decode difference changes how many tasks
   new endpoint, useless as a capability score.
 - Terminal-Bench 2.0, five tasks: broad terminal agency, useful when the question is "can it run commands
   and recover", not "can it fix an issue".
+
+## Running it on this machine: what actually had to be fixed
+
+Verified while piloting one HARD-51 task, 2026-11-26. None of this is in the upstream docs.
+
+**Reaching the model from the sandbox.** Harbor gives every task its own Docker compose network
+(`172.20.0.0/16` here), which the host firewall drops on the way in. The model also binds loopback only.
+
+The working shape: a `socat` relay on the docker gateway (`172.17.0.1:8884` to `127.0.0.1:8884`) plus
+one ufw rule covering all Docker subnets,
+`sudo ufw allow from 172.16.0.0/12 to 172.17.0.1 port 8884 proto tcp`. Nothing is exposed on the LAN.
+Then pass `--ae OPENAI_API_BASE=http://172.17.0.1:8884/v1 --allow-agent-host 172.17.0.1`.
+
+**Harbor needs the buildx plugin.** Without it the egress sidecar image fails with
+`unknown flag: --file`. Drop the `docker-buildx` binary into `~/.docker/cli-plugins/`, no root needed.
+
+**Reasoning effort is a hard failure, not a downgrade.** The harness sends `reasoning_effort: high` by
+default. Bonsai's template accepts only `xhigh` (its own default), `medium` and `low`, and renders a
+Jinja exception for anything else, which arrives as `InternalServerError` and is retried forever with no
+tokens generated. Pass `--effort medium`. Symptom to recognise: container up, agent running, GPU idle.
+
+**Speed is measured from the server, not inferred.** Start it with `--metrics` and bracket the run:
+`bench/swebench-speed.sh snapshot before`, run, `snapshot after`, then `report`. Agent loops reuse the
+KV prefix, so a mid-run window showed 33,735 of 33,739 prompt tokens served from cache; quoting a fresh
+prefill number for such a run would be wrong. Expected decode here is 55 to 75 tok/s.
