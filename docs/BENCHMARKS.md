@@ -112,6 +112,11 @@ Three things that are not obvious from the upstream docs and cost time to discov
   to and allowlist it with `--allow-agent-host`.
 - Harbor's docker executor builds an egress-control sidecar and needs the `docker buildx` CLI plugin.
   Without it the trial dies in about two seconds with `unknown flag: --file`.
+- Harbor's Docker egress sidecar can cut long streaming responses against a local endpoint, roughly
+  12 seconds and 650 tokens into each call, which surfaces as `litellm ... Connection error` and a
+  trajectory with no patch. Running a copy of the task with an all-public network policy removes the
+  sidecar. That also removes the sandbox's network isolation, so audit the trajectory for fetches if you
+  care about cheating; every scored trajectory here is checked for it.
 - Bonsai's chat template accepts `reasoning_effort` values `xhigh` (its default), `medium` and `low`. The
   harness sends `high` by default, which the template rejects with a Jinja exception surfaced as
   `InternalServerError` and retried indefinitely. Pass `--effort medium`. The symptom is a running agent,
