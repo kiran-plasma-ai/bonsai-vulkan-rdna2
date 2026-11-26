@@ -1,0 +1,8 @@
+ggml_vulkan: Found 1 Vulkan devices:
+ggml_vulkan: 0 = AMD Radeon RX 6800 XT (RADV NAVI21) (radv) | uma: 0 | rebar: 1 | fp16: dot2 | bf16: 0 | fp4: 0 | warp size: 32 | shared memory: 65536 | int dot: 1 | matrix cores: none
+| model                          |       size |     params | backend    | ngl |            test |                  t/s |
+| ------------------------------ | ---------: | ---------: | ---------- | --: | --------------: | -------------------: |
+| qwen35 27B Q2_0                |   7.14 GiB |    26.90 B | Vulkan     |   0 |           pp512 |        263.96 ± 1.57 |
+| qwen35 27B Q2_0                |   7.14 GiB |    26.90 B | Vulkan     |   0 |            tg64 |          4.92 ± 0.06 |
+
+build: 30ec35a (1)
