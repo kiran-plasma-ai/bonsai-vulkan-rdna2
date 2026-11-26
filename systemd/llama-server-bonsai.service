@@ -1,0 +1,31 @@
+[Unit]
+Description=llama.cpp server (Ternary Bonsai 2.5 27B, Prism fork, Vulkan, 64K, MTP)
+After=network.target
+# One card: only one of the served models can hold its weights at a time.
+Conflicts=llama-server-inkling.service rustingstrata-inkling.service
+
+[Service]
+Type=simple
+# The fork install strips RUNPATH, like upstream; libraries come from its own lib dir.
+Environment=LD_LIBRARY_PATH=%h/.local/share/llama.cpp-prism/lib
+# Prism's fork is required: stock llama.cpp has no Vulkan kernel for the Hadamard transform.
+# MTP draft window 2 is the measured optimum on RDNA2 (their CUDA presets use 3).
+ExecStart=%h/.local/share/llama.cpp-prism/bin/llama-server \
+    -m %h/models/bonsai/Ternary-Bonsai-2.5-27B-Q2_0-mtp.gguf \
+    -ngl 99 \
+    -fa on \
+    -c 65536 \
+    --jinja \
+    --alias bonsai-2.5-27b \
+    --parallel 1 \
+    --spec-type draft-mtp \
+    --spec-draft-n-max 2 \
+    --spec-draft-p-min 0 \
+    --host 127.0.0.1 \
+    --port 8884 \
+    --timeout 600
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

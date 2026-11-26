@@ -45,6 +45,18 @@ that type (`mul_mat_vec_ptq1_0`, `mul_mat_vecq_ptq1_0`) while `Q2_0` uses the st
 contribution: it would put prefill near 490 and keep the 51 tok/s decode. Until then, an agentic
 workload that re-reads long prompts is better served by `Q2_0` with MTP (489 prefill, 66 decode).
 
+## Serve it
+
+`systemd/llama-server-bonsai.service` runs `Q2_0-mtp` at 64K context on port 8884 through the fork, with
+MTP drafting at `n-max 2`. Measured through the HTTP server on this card: 490 tok/s prefill on a 5.7k
+prompt, 74 tok/s decode, 13.5 GiB of VRAM, native tool calls working. A 30.5k-token prompt prefills in
+66 s and decodes at 64 tok/s. Configuration, client notes and the settings that do not work are in
+[docs/SERVING.md](docs/SERVING.md).
+
+For model comparison, [docs/BENCHMARKS.md](docs/BENCHMARKS.md) surveys the agentic suites that can be
+pointed at an OpenAI-compatible endpoint (t-bench text, Terminal-Bench, SWE-bench with mini-swe-agent,
+Aider polyglot) with wiring notes and wall-time estimates for this card.
+
 ## Reproduce
 
 ```sh
